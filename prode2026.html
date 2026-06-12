@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prode Totalitos — Mundial 2026</title>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --surface2: #1f1f1f;
+    --border: #2a2a2a;
+    --accent: #e8a020;
+    --accent2: #c0392b;
+    --text: #f0f0f0;
+    --muted: #888;
+    --green: #27ae60;
+    --radius: 6px;
+    --font-mono: 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #1a0a00 0%, #2d1200 50%, #1a0a00 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-ball { font-size: 32px; }
+  .header-title { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: 1px; }
+  .header-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .header-right { margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* CONTENT */
+  .content { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+
+  /* RANKING */
+  .ranking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .rank-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .rank-card.pos1 { border-color: #f0c040; background: linear-gradient(135deg, #1a1400, #1f1900); }
+  .rank-card.pos2 { border-color: #a0a8b0; background: linear-gradient(135deg, #111418, #161a1e); }
+  .rank-card.pos3 { border-color: #b06030; background: linear-gradient(135deg, #140e08, #1a1208); }
+  .rank-pos { font-size: 28px; font-weight: 900; color: var(--border); position: absolute; top: 8px; right: 12px; font-family: var(--font-mono); }
+  .rank-pos.p1 { color: #f0c040; }
+  .rank-pos.p2 { color: #a0a8b0; }
+  .rank-pos.p3 { color: #b06030; }
+  .rank-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .rank-pts { font-size: 28px; font-weight: 900; color: var(--accent); font-family: var(--font-mono); }
+  .rank-pts span { font-size: 13px; color: var(--muted); font-weight: 400; }
+  .rank-detail { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* MATCHES TABLE */
+  .day-block { margin-bottom: 20px; }
+  .day-header {
+    background: var(--accent2);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  table.matches {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border-radius: 0 0 var(--radius) var(--radius);
+    overflow: hidden;
+  }
+  table.matches th {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 8px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    background: var(--surface2);
+  }
+  table.matches th.left { text-align: left; }
+  table.matches td {
+    padding: 8px 10px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+  }
+  table.matches tr:last-child td { border-bottom: none; }
+  table.matches td.match-name { text-align: left; font-weight: 600; min-width: 160px; }
+  table.matches td.match-name .teams { font-size: 12px; }
+  table.matches td.match-name .local { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .result-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    min-width: 28px;
+    text-align: center;
+  }
+  .result-L { background: #1a3a1a; color: #4ec94e; }
+  .result-E { background: #1a1a3a; color: #7090ff; }
+  .result-V { background: #3a1a1a; color: #ff7060; }
+  .result-? { background: var(--border); color: var(--muted); }
+
+  /* result selector */
+  .result-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    min-width: 60px;
+  }
+  .result-select:focus { outline: 2px solid var(--accent); }
+
+  /* hit indicators */
+  .hit { color: var(--green); font-weight: 700; }
+  .miss { color: var(--accent2); }
+  .pending { color: var(--muted); }
+
+  /* PRONOSTICOS VIEW */
+  .prono-table-wrap { overflow-x: auto; }
+  table.prono {
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 800px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  table.prono th {
+    background: var(--surface2);
+    color: var(--muted);
+    padding: 8px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  table.prono td {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+  }
+  table.prono td.partido {
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    background: var(--surface2);
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+  table.prono td.result-real {
+    background: var(--surface2);
+  }
+
+  /* BUTTONS */
+  .btn {
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: #000; border-color: var(--accent); }
+  .btn-primary:hover { background: #f0b030; }
+  .btn-secondary { background: transparent; color: var(--muted); border-color: var(--border); }
+  .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
+
+  /* Section titles */
+  .section-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    margin-left: 6px;
+  }
+  .badge.live { background: #1a3010; color: #4fc040; border-color: #4fc040; }
+
+  /* Info note */
+  .info-note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+  }
+
+  /* MODAL ADMIN */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 28px 32px; width: 100%; max-width: 340px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .modal h3 { color: var(--accent); font-size: 16px; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .modal input[type=password] {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-size: 15px; padding: 10px 12px;
+    border-radius: var(--radius); outline: none; margin-bottom: 12px;
+    letter-spacing: 3px;
+  }
+  .modal input[type=password]:focus { border-color: var(--accent); }
+  .modal-error { color: var(--accent2); font-size: 12px; margin-bottom: 10px; display:none; }
+  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+  .admin-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: 1px solid var(--border); transition: 0.15s;
+  }
+  .admin-badge.locked { background: var(--surface2); color: var(--muted); }
+  .admin-badge.locked:hover { border-color: var(--accent); color: var(--accent); }
+  .admin-badge.unlocked { background: #0d2a18; color: var(--green); border-color: var(--green); }
+  .tab-locked { opacity: 0.45; cursor: not-allowed !important; }
+  .tab-locked::after { content: ' 🔒'; font-size: 10px; }
+  .part-list { display: flex; flex-direction: column; gap: 8px; max-width: 560px; }
+  .part-row {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 14px;
+  }
+  .part-row:hover { border-color: var(--accent); }
+  .part-num { font-size: 12px; color: var(--muted); font-family: var(--font-mono); min-width: 20px; }
+  .part-name-input {
+    flex: 1; background: transparent; border: none; color: var(--text);
+    font-size: 14px; font-weight: 600; outline: none; font-family: inherit;
+    border-bottom: 1px solid transparent; transition: border-color 0.15s;
+  }
+  .part-name-input:focus { border-bottom-color: var(--accent); }
+  .part-name-input.changed { border-bottom-color: #f0c040; color: #f0c040; }
+  .part-actions { display: flex; gap: 6px; }
+  .btn-icon {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;
+    transition: 0.15s;
+  }
+  .btn-icon:hover { color: var(--text); border-color: var(--muted); }
+  .btn-icon.save { border-color: var(--green); color: var(--green); }
+  .btn-icon.save:hover { background: #0d2a18; }
+  .btn-icon.danger:hover { border-color: var(--accent2); color: var(--accent2); }
+  .prono-edit-select {
+    background: #1a1200; border: 1px solid #f0c040; color: #f0c040;
+    font-size: 11px; font-weight: 700; padding: 2px 4px;
+    border-radius: 3px; cursor: pointer; font-family: var(--font-mono);
+    width: 44px;
+  }
+  .prono-edit-select:focus { outline: none; }
+    margin-top: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .changes-note { font-size: 12px; color: #f0c040; }
+
+  @media (max-width: 600px) {
+    .content { padding: 12px; }
+    .ranking-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-ball">⚽</div>
+  <div>
+    <div class="header-title">PRODE TOTALITOS — MUNDIAL 2026</div>
+    <div class="header-sub">Pozo: $30.000 x participante · Un solo ganador · Entrega: Mié 10/06/2026</div>
+  </div>
+  <div class="header-right">
+    <div class="admin-badge locked" id="admin-badge" onclick="toggleAdmin()">
+      🔒 <span id="admin-label">Admin</span>
+    </div>
+    <button class="btn btn-secondary" onclick="exportCSV()">⬇ CSV</button>
+  </div>
+</div>
+
+<!-- MODAL CLAVE -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal">
+    <h3>🔐 Acceso administrador</h3>
+    <p>Ingresá la clave para habilitar la edición de resultados y participantes.</p>
+    <input type="password" id="admin-pwd-input" placeholder="Clave..." onkeydown="if(event.key==='Enter') checkAdmin()" autocomplete="off" />
+    <div class="modal-error" id="admin-error">Clave incorrecta</div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeAdminModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="checkAdmin()">Ingresar</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="ranking">🏆 Ranking</button>
+  <button class="tab" data-tab="partidos">📅 Partidos</button>
+  <button class="tab" data-tab="pronosticos">📋 Pronósticos</button>
+  <button class="tab" data-tab="participantes">👥 Participantes</button>
+</div>
+
+<div class="content">
+  <div id="tab-ranking"></div>
+  <div id="tab-partidos" style="display:none"></div>
+  <div id="tab-pronosticos" style="display:none"></div>
+  <div id="tab-participantes" style="display:none"></div>
+</div>
+
+<script>
+// =============================================
+// DATA
+// =============================================
+
+const PARTICIPANTES = [
+  { id: 'santiago',  nombre: 'Santiago LK' },
+  { id: 'contrems',  nombre: 'Javier Contrems' },
+  { id: 'epul',      nombre: 'Epul Esteban 17' },
+  { id: 'valeria',   nombre: 'Valeria Maldonado' },
+  { id: 'laysfel',   nombre: 'Martín Z.' },
+  { id: 'delia',     nombre: 'Delia Vedoya' },
+  { id: 'jefer',     nombre: 'Lucas Marto' },
+  { id: 'natai',     nombre: 'Matías Krugon' },
+  { id: 'rama',      nombre: 'Rama Espósito' },
+  { id: 'leandro',   nombre: 'Leandro Marzeniuk' },
+  { id: 'anon11',    nombre: 'Mariela' },
+  { id: 'bernabei',  nombre: 'Bernabey Mannin' },
+];
+
+// L = Local gana, E = Empate, V = Visitante gana
+// Formato: { id, fecha, local, visitante, resultado_real, pronosticos:{pid:L/E/V} }
+// resultado_real: null = pendiente, 'L','E','V'
+// FIXTURE OFICIAL FIFA/ESPN — fase de grupos
+
+// PRONÓSTICOS LEÍDOS DEL PDF (versión correcta, derecha)
+// Participantes en orden: santiago, contrems, epul, valeria, laysfel(=martin), delia, jefer(=lucas), natai(=matias), rama, leandro, anon11(=mariela), bernabei
+
+const PARTIDOS = [
+  // JUE 11/06 — 2 partidos
+  { id:'p01', fecha:'JUE 11/06', local:'México', visitante:'Sudáfrica',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Corea del Sur vs Rep. Checa
+  // S=E, C=L(tachado→L), E=L, V=E, M=L, D=L, L=L, Ma=L, Ra=L(E), Le=E, Ma2=L(ileg), B=E
+  { id:'p02', fecha:'JUE 11/06', local:'Corea del Sur', visitante:'Rep. Checa',
+    resultado_real:null,
+    pronosticos:{ santiago:'E', contrems:'L', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'E', anon11:'L', bernabei:'E' } },
+
+  // VIE 12/06 — 2 partidos
+  { id:'p03', fecha:'VIE 12/06', local:'Canadá', visitante:'Bosnia y He.',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // EEUU vs Paraguay
+  { id:'p04', fecha:'VIE 12/06', local:'EEUU', visitante:'Paraguay',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'E', leandro:'V', anon11:'L', bernabei:'L' } },
+
+  // SÁB 13/06 — 3 partidos
+  // Qatar vs Suiza
+  { id:'p05', fecha:'SÁB 13/06', local:'Qatar', visitante:'Suiza',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Brasil vs Marruecos
+  { id:'p06', fecha:'SÁB 13/06', local:'Brasil', visitante:'Marruecos',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'E' } },
+  // Haití vs Escocia
+  { id:'p07', fecha:'SÁB 13/06', local:'Haití', visitante:'Escocia',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'E', valeria:'V', laysfel:'V', delia:'V', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+
+  // DOM 14/06 — 5 partidos
+  // Australia vs Turquía
+  { id:'p07b', fecha:'DOM 14/06', local:'Australia', visitante:'Turquía',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Alemania vs Curazao
+  { id:'p08', fecha:'DOM 14/06', local:'Alemania', visitante:'Curazao',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Países Bajos vs Japón
+  { id:'p09', fecha:'DOM 14/06', local:'Países Bajos', visitante:'Japón',
+    resultado_real:null,
+    pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'E', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'E' } },
+  // Costa de Marfil vs Ecuador
+  { id:'p10', fecha:'DOM 14/06', local:'Costa de Ma.', visitante:'Ecuador',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Suecia vs Túnez
+  { id:'p11', fecha:'DOM 14/06', local:'Suecia', visitante:'Túnez',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+
+  // LUN 15/06 — 4 partidos
+  // España vs Cabo Verde
+  { id:'p13', fecha:'LUN 15/06', local:'España', visitante:'Cabo Verde',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Bélgica vs Egipto
+  { id:'p14', fecha:'LUN 15/06', local:'Bélgica', visitante:'Egipto',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Arabia Saudita vs Uruguay
+  { id:'p15', fecha:'LUN 15/06', local:'Arabia Saud.', visitante:'Uruguay',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'L', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'E', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Irán vs N. Zelanda
+  { id:'p16', fecha:'LUN 15/06', local:'Irán', visitante:'N. Zelanda',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'L', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'L' } },
+
+  // MAR 16/06 — 3 partidos
+  // Francia vs Senegal
+  { id:'p18', fecha:'MAR 16/06', local:'Francia', visitante:'Senegal',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Irak vs Noruega
+  { id:'p19', fecha:'MAR 16/06', local:'Irak', visitante:'Noruega',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'E', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'V' } },
+  // Argentina vs Argelia
+  { id:'p20', fecha:'MAR 16/06', local:'Argentina', visitante:'Argelia',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+
+  // MIÉ 17/06 — 5 partidos
+  // Austria vs Jordania
+  { id:'p21', fecha:'MIÉ 17/06', local:'Austria', visitante:'Jordania',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Portugal vs R.D. Congo
+  { id:'p22', fecha:'MIÉ 17/06', local:'Portugal', visitante:'R.D. Congo',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Inglaterra vs Croacia
+  { id:'p23', fecha:'MIÉ 17/06', local:'Inglaterra', visitante:'Croacia',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'E', anon11:'L', bernabei:'L' } },
+  // Ghana vs Panamá
+  { id:'p24', fecha:'MIÉ 17/06', local:'Ghana', visitante:'Panamá',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Uzbekistán vs Colombia
+  { id:'p25', fecha:'MIÉ 17/06', local:'Uzbekistán', visitante:'Colombia',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+
+  // JUE 18/06 — 4 partidos
+  // Rep. Checa vs Sudáfrica
+  { id:'p26', fecha:'JUE 18/06', local:'Rep. Checa', visitante:'Sudáfrica',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Suiza vs Bosnia y He.
+  { id:'p27', fecha:'JUE 18/06', local:'Suiza', visitante:'Bosnia y He.',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'E', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
+  // Canadá vs Qatar
+  { id:'p28', fecha:'JUE 18/06', local:'Canadá', visitante:'Qatar',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
+  // México vs Corea del Sur
+  { id:'p29', fecha:'JUE 18/06', local:'México', visitante:'Corea del Sur',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+
+  // VIE 19/06 — 4 partidos
+  // EEUU vs Australia
+  { id:'p30', fecha:'VIE 19/06', local:'EEUU', visitante:'Australia',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Escocia vs Marruecos
+  { id:'p31', fecha:'VIE 19/06', local:'Escocia', visitante:'Marruecos',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'E', anon11:'L', bernabei:'L' } },
+  // Brasil vs Haití
+  { id:'p32', fecha:'VIE 19/06', local:'Brasil', visitante:'Haití',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Turquía vs Paraguay
+  { id:'p33', fecha:'VIE 19/06', local:'Turquía', visitante:'Paraguay',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'V', anon11:'L', bernabei:'L' } },
+
+  // SÁB 20/06 — 3 partidos
+  // Países Bajos vs Suecia
+  { id:'p35', fecha:'SÁB 20/06', local:'Países Bajos', visitante:'Suecia',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Alemania vs Costa de Marfil
+  { id:'p36', fecha:'SÁB 20/06', local:'Alemania', visitante:'Costa de Ma.',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Ecuador vs Curazao
+  { id:'p37', fecha:'SÁB 20/06', local:'Ecuador', visitante:'Curazao',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+
+  // DOM 21/06 — 5 partidos
+  // Túnez vs Japón
+  { id:'p38', fecha:'DOM 21/06', local:'Túnez', visitante:'Japón',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // España vs Arabia Saudita
+  { id:'p39', fecha:'DOM 21/06', local:'España', visitante:'Arabia Saud.',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Uruguay vs Cabo Verde
+  { id:'p41', fecha:'DOM 21/06', local:'Uruguay', visitante:'Cabo Verde',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Bélgica vs Irán
+  { id:'p40', fecha:'DOM 21/06', local:'Bélgica', visitante:'Irán',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // N. Zelanda vs Egipto
+  { id:'p42', fecha:'DOM 21/06', local:'N. Zelanda', visitante:'Egipto',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'E', rama:'V', leandro:'E', anon11:'L', bernabei:'V' } },
+
+  // LUN 22/06 — 4 partidos
+  // Argentina vs Austria
+  { id:'p43', fecha:'LUN 22/06', local:'Argentina', visitante:'Austria',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Francia vs Irak
+  { id:'p44', fecha:'LUN 22/06', local:'Francia', visitante:'Irak',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Noruega vs Senegal
+  { id:'p45', fecha:'LUN 22/06', local:'Noruega', visitante:'Senegal',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Jordania vs Argelia
+  { id:'p46', fecha:'LUN 22/06', local:'Jordania', visitante:'Argelia',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+
+  // MAR 23/06 — 4 partidos
+  // Portugal vs Uzbekistán
+  { id:'p47', fecha:'MAR 23/06', local:'Portugal', visitante:'Uzbekistán',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Inglaterra vs Ghana
+  { id:'p48', fecha:'MAR 23/06', local:'Inglaterra', visitante:'Ghana',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
+  // Panamá vs Croacia
+  { id:'p49', fecha:'MAR 23/06', local:'Panamá', visitante:'Croacia',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'V', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Colombia vs R.D. Congo
+  { id:'p50', fecha:'MAR 23/06', local:'Colombia', visitante:'R.D. Congo',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
+
+  // MIÉ 24/06 — 6 partidos
+  // Canadá vs Suiza
+  { id:'p51', fecha:'MIÉ 24/06', local:'Canadá', visitante:'Suiza',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'E', anon11:'L', bernabei:'L' } },
+  // Bosnia vs Qatar
+  { id:'p52', fecha:'MIÉ 24/06', local:'Bosnia y He.', visitante:'Qatar',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'E', anon11:'L', bernabei:'L' } },
+  // Escocia vs Brasil
+  { id:'p54', fecha:'MIÉ 24/06', local:'Escocia', visitante:'Brasil',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Marruecos vs Haití
+  { id:'p53', fecha:'MIÉ 24/06', local:'Marruecos', visitante:'Haití',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // México vs Rep. Checa
+  { id:'p56', fecha:'MIÉ 24/06', local:'México', visitante:'Rep. Checa',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
+  // Sudáfrica vs Corea del Sur
+  { id:'p55', fecha:'MIÉ 24/06', local:'Sudáfrica', visitante:'Corea del Sur',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+
+  // JUE 25/06 — 6 partidos
+  // Ecuador vs Alemania
+  { id:'p62', fecha:'JUE 25/06', local:'Ecuador', visitante:'Alemania',
+    resultado_real:null,
+    pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Curazao vs Costa de Marfil
+  { id:'p61', fecha:'JUE 25/06', local:'Curazao', visitante:'Costa de Ma.',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Túnez vs Países Bajos
+  { id:'p64', fecha:'JUE 25/06', local:'Túnez', visitante:'Países Bajos',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Japón vs Suecia
+  { id:'p63', fecha:'JUE 25/06', local:'Japón', visitante:'Suecia',
+    resultado_real:null,
+    pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'E', anon11:'L', bernabei:'L' } },
+  // EEUU vs Turquía
+  { id:'p57', fecha:'JUE 25/06', local:'EEUU', visitante:'Turquía',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'V' } },
+  // Paraguay vs Australia
+  { id:'p58', fecha:'JUE 25/06', local:'Paraguay', visitante:'Australia',
+    resultado_real:null,
+    pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
+
+  // VIE 26/06 — 6 partidos
+  // Noruega vs Francia
+  { id:'p70', fecha:'VIE 26/06', local:'Noruega', visitante:'Francia',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Senegal vs Irak
+  { id:'p72', fecha:'VIE 26/06', local:'Senegal', visitante:'Irak',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Uruguay vs España
+  { id:'p66', fecha:'VIE 26/06', local:'Uruguay', visitante:'España',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Cabo Verde vs Arabia Saudita
+  { id:'p65', fecha:'VIE 26/06', local:'Cabo Verde', visitante:'Arabia Saud.',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // N. Zelanda vs Bélgica
+  { id:'p67', fecha:'VIE 26/06', local:'N. Zelanda', visitante:'Bélgica',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Egipto vs Irán
+  { id:'p68', fecha:'VIE 26/06', local:'Egipto', visitante:'Irán',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+
+  // SÁB 27/06 — 6 partidos
+  // Panamá vs Inglaterra
+  { id:'p74', fecha:'SÁB 27/06', local:'Panamá', visitante:'Inglaterra',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Croacia vs Ghana (⚠ p75 en fixture, pero en planilla dice Ghana vs Colombia — revisar)
+  { id:'p75', fecha:'SÁB 27/06', local:'Croacia', visitante:'Ghana',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  // Colombia vs Portugal
+  { id:'p73', fecha:'SÁB 27/06', local:'Colombia', visitante:'Portugal',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // R.D. Congo vs Uzbekistán
+  { id:'p76', fecha:'SÁB 27/06', local:'R.D. Congo', visitante:'Uzbekistán',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Jordania vs Argentina
+  { id:'p69', fecha:'SÁB 27/06', local:'Jordania', visitante:'Argentina',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  // Argelia vs Austria
+  { id:'p71', fecha:'SÁB 27/06', local:'Argelia', visitante:'Austria',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'V', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+];
+];
+
+// =============================================
+// SCORING
+// =============================================
+function calcularPuntos() {
+  const puntos = {};
+  const aciertos = {};
+  const pendientes = {};
+  PARTICIPANTES.forEach(p => { puntos[p.id] = 0; aciertos[p.id] = 0; pendientes[p.id] = 0; });
+
+  PARTIDOS.forEach(partido => {
+    if (!partido.resultado_real) {
+      PARTICIPANTES.forEach(p => pendientes[p.id]++);
+      return;
+    }
+    PARTICIPANTES.forEach(p => {
+      const prono = partido.pronosticos[p.id];
+      if (prono === partido.resultado_real) {
+        puntos[p.id]++;
+        aciertos[p.id]++;
+      }
+    });
+  });
+
+  return PARTICIPANTES.map(p => ({
+    ...p,
+    puntos: puntos[p.id],
+    aciertos: aciertos[p.id],
+    pendientes: pendientes[p.id],
+  })).sort((a, b) => b.puntos - a.puntos);
+}
+
+// =============================================
+// ADMIN AUTH
+// =============================================
+const ADMIN_KEY = 'zapala';
+let isAdmin = false;
+
+function toggleAdmin() {
+  if (isAdmin) {
+    isAdmin = false;
+    updateAdminUI();
+  } else {
+    document.getElementById('modal-admin').classList.add('open');
+    setTimeout(() => document.getElementById('admin-pwd-input').focus(), 50);
+  }
+}
+
+function closeAdminModal() {
+  document.getElementById('modal-admin').classList.remove('open');
+  document.getElementById('admin-pwd-input').value = '';
+  document.getElementById('admin-error').style.display = 'none';
+}
+
+function checkAdmin() {
+  const val = document.getElementById('admin-pwd-input').value.trim().toLowerCase();
+  if (val === ADMIN_KEY) {
+    isAdmin = true;
+    closeAdminModal();
+    updateAdminUI();
+    // si está en tab bloqueada, re-renderizar
+    if (currentTab === 'partidos') renderPartidos();
+    if (currentTab === 'participantes') renderParticipantes();
+  } else {
+    document.getElementById('admin-error').style.display = 'block';
+    document.getElementById('admin-pwd-input').value = '';
+    document.getElementById('admin-pwd-input').focus();
+  }
+}
+
+function updateAdminUI() {
+  const badge = document.getElementById('admin-badge');
+  const label = document.getElementById('admin-label');
+  if (isAdmin) {
+    badge.className = 'admin-badge unlocked';
+    label.textContent = 'Admin activo · click para cerrar';
+  } else {
+    badge.className = 'admin-badge locked';
+    label.textContent = 'Admin';
+  }
+  // tabs bloqueadas
+  document.querySelectorAll('.tab[data-tab="partidos"], .tab[data-tab="participantes"]').forEach(t => {
+    t.classList.toggle('tab-locked', !isAdmin);
+  });
+  // re-render tab activa si aplica
+  if (currentTab === 'partidos') renderPartidos();
+  if (currentTab === 'participantes') renderParticipantes();
+}
+
+// click fuera del modal cierra
+document.getElementById('modal-admin').addEventListener('click', function(e) {
+  if (e.target === this) closeAdminModal();
+});
+
+
+function renderRanking() {
+  const ranked = calcularPuntos();
+  const totalJugados = PARTIDOS.filter(p => p.resultado_real).length;
+  const totalPartidos = PARTIDOS.length;
+
+  const totalPozo = PARTICIPANTES.length * 30000;
+  const pozoFmt = totalPozo.toLocaleString('es-AR');
+  let html = `<div class="section-title">🏆 Ranking en vivo <span class="badge live">● LIVE</span></div>`;
+  html += `<div class="info-note">⚽ ${totalJugados} / ${totalPartidos} partidos cargados · 1 punto por acierto · Pozo total: $${pozoFmt} · Un solo ganador</div>`;
+  html += `<div class="ranking-grid">`;
+
+  ranked.forEach((p, i) => {
+    const posClass = i === 0 ? 'pos1' : i === 1 ? 'pos2' : i === 2 ? 'pos3' : '';
+    const posNumClass = i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : '';
+    html += `<div class="rank-card ${posClass}">
+      <div class="rank-pos ${posNumClass}">${i+1}</div>
+      <div class="rank-name">${p.nombre}</div>
+      <div class="rank-pts">${p.puntos} <span>pts</span></div>
+      <div class="rank-detail">✓ ${p.aciertos} aciertos · ⏳ ${p.pendientes} pendientes</div>
+    </div>`;
+  });
+
+  html += `</div>`;
+  document.getElementById('tab-ranking').innerHTML = html;
+}
+
+// =============================================
+// RENDER: PARTIDOS
+// =============================================
+function renderPartidos() {
+  const fechas = [...new Set(PARTIDOS.map(p => p.fecha))];
+  let html = `<div class="section-title">📅 Resultados reales</div>`;
+
+  if (!isAdmin) {
+    html += `<div class="info-note" style="border-left-color:var(--accent2)">🔒 Vista de solo lectura. Iniciá sesión como admin para cargar resultados.</div>`;
+    fechas.forEach(fecha => {
+      const psFecha = PARTIDOS.filter(p => p.fecha === fecha);
+      html += `<div class="day-block">
+        <div class="day-header">${fecha} — ${psFecha.length} partido${psFecha.length > 1 ? 's' : ''}</div>
+        <table class="matches"><thead><tr>
+          <th class="left">Partido</th><th>Resultado</th>
+        </tr></thead><tbody>`;
+      psFecha.forEach(p => {
+        const r = p.resultado_real;
+        html += `<tr>
+          <td class="match-name">
+            <div class="teams">${p.local} <span style="color:var(--muted)">vs</span> ${p.visitante}</div>
+          </td>
+          <td>${r ? `<span class="result-badge result-${r}">${r === 'L' ? p.local.split(' ')[0] : r === 'V' ? p.visitante.split(' ')[0] : 'Empate'}</span>` : `<span class="result-badge result-?">Pendiente</span>`}</td>
+        </tr>`;
+      });
+      html += `</tbody></table></div>`;
+    });
+    document.getElementById('tab-partidos').innerHTML = html;
+    return;
+  }
+
+  html += `<div class="info-note">Seleccioná el resultado real de cada partido. Los puntos se actualizan automáticamente.</div>`;
+  fechas.forEach(fecha => {
+    const psFecha = PARTIDOS.filter(p => p.fecha === fecha);
+    html += `<div class="day-block">
+      <div class="day-header">${fecha} — ${psFecha.length} partido${psFecha.length > 1 ? 's' : ''}</div>
+      <table class="matches">
+        <thead><tr>
+          <th class="left">Partido</th>
+          <th>Resultado real</th>
+        </tr></thead>
+        <tbody>`;
+    psFecha.forEach(p => {
+      const r = p.resultado_real;
+      html += `<tr>
+        <td class="match-name">
+          <div class="teams">${p.local} <span style="color:var(--muted)">vs</span> ${p.visitante}</div>
+          <div class="local">L=${p.local} · E=Empate · V=${p.visitante}</div>
+        </td>
+        <td>
+          <select class="result-select" onchange="setResultado('${p.id}', this.value)">
+            <option value="" ${!r ? 'selected' : ''}>— pendiente —</option>
+            <option value="L" ${r==='L' ? 'selected' : ''}>L (${p.local.split(' ')[0]})</option>
+            <option value="E" ${r==='E' ? 'selected' : ''}>E (Empate)</option>
+            <option value="V" ${r==='V' ? 'selected' : ''}>V (${p.visitante.split(' ')[0]})</option>
+          </select>
+        </td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  });
+  document.getElementById('tab-partidos').innerHTML = html;
+}
+
+async function setResultado(pid, valor) {
+  const p = PARTIDOS.find(x => x.id === pid);
+  if (p) {
+    p.resultado_real = valor || null;
+    await saveResultados();
+    renderRanking();
+  }
+}
+
+// =============================================
+// RENDER: PRONÓSTICOS
+// =============================================
+function renderPronosticos() {
+  const ranked = calcularPuntos();
+  const pidOrder = ranked.map(p => p.id);
+  const hayDudas = PARTIDOS.some(p => p.dudas && p.dudas.length);
+
+  let html = `<div class="section-title">📋 Grilla de pronósticos</div>`;
+  if (hayDudas) {
+    html += `<div class="info-note" style="border-left-color:#f0c040">⚠ Los pronósticos marcados en <span style="color:#f0c040;font-weight:700">amarillo</span> tienen dudas de lectura — verificar contra planilla física.${isAdmin ? ' Hacé click en el valor para corregirlo.' : ' Iniciá sesión como admin para corregirlos.'}</div>`;
+  }
+
+  html += `<div class="prono-table-wrap"><table class="prono"><thead><tr>
+    <th class="partido">Partido</th>
+    <th>Real</th>`;
+
+  pidOrder.forEach(pid => {
+    const p = ranked.find(x => x.id === pid);
+    const pos = ranked.indexOf(p) + 1;
+    html += `<th title="${p.nombre}">${pos}. ${p.nombre.split(' ')[0]}<br><span style="color:var(--accent)">${p.puntos}pt</span></th>`;
+  });
+  html += `</tr></thead><tbody>`;
+
+  const fechas = [...new Set(PARTIDOS.map(p => p.fecha))];
+  fechas.forEach(fecha => {
+    html += `<tr><td colspan="${2 + pidOrder.length}" style="background:#1a0800;color:var(--accent);font-weight:700;font-size:11px;padding:6px 10px;text-transform:uppercase;">${fecha}</td></tr>`;
+    PARTIDOS.filter(p => p.fecha === fecha).forEach(partido => {
+      const r = partido.resultado_real;
+      const dudas = partido.dudas || [];
+      html += `<tr>
+        <td class="partido">${partido.local} v ${partido.visitante}</td>
+        <td class="result-real">${r ? `<span class="result-badge result-${r}">${r}</span>` : `<span class="result-badge result-?">?</span>`}</td>`;
+
+      pidOrder.forEach(pid => {
+        const prono = partido.pronosticos[pid];
+        const esDuda = dudas.includes(pid);
+        let cls = 'pending';
+        if (r && prono === r) cls = 'hit';
+        else if (r && prono !== r) cls = 'miss';
+        const icon = r ? (prono === r ? '✓' : '✗') : '';
+
+        if (esDuda && isAdmin) {
+          // Admin: selector editable
+          html += `<td style="background:#1a1200;padding:2px 4px;">
+            <select class="prono-edit-select" onchange="setPronostico('${partido.id}','${pid}',this.value)" title="⚠ Duda — editá el valor">
+              <option value="L" ${prono==='L'?'selected':''}>L</option>
+              <option value="E" ${prono==='E'?'selected':''}>E</option>
+              <option value="V" ${prono==='V'?'selected':''}>V</option>
+            </select>
+            <span style="font-size:9px;color:#f0c040">⚠</span>
+          </td>`;
+        } else if (esDuda) {
+          // Solo lectura con marca visual
+          html += `<td class="${cls}" style="background:#1a1200;" title="⚠ Duda — requiere verificación">
+            <span class="result-badge result-${prono}" style="border:1px solid #f0c040">${prono}</span>
+            <span style="font-size:9px;color:#f0c040">⚠</span>
+            ${icon ? `<span style="font-size:11px">${icon}</span>` : ''}
+          </td>`;
+        } else {
+          html += `<td class="${cls}"><span class="result-badge result-${prono}">${prono}</span> <span style="font-size:11px">${icon}</span></td>`;
+        }
+      });
+      html += `</tr>`;
+    });
+  });
+
+  html += `</tbody></table></div>`;
+  document.getElementById('tab-pronosticos').innerHTML = html;
+}
+
+async function setPronostico(pid, participanteId, valor) {
+  if (!isAdmin) return;
+  const partido = PARTIDOS.find(p => p.id === pid);
+  if (!partido) return;
+  partido.pronosticos[participanteId] = valor;
+  await sbUpsert('prode_pronosticos', [{ partido_id: pid, participante_id: participanteId, valor }]);
+  renderRanking();
+  const wrap = document.querySelector('.prono-table-wrap');
+  const scrollLeft = wrap ? wrap.scrollLeft : 0;
+  renderPronosticos();
+  if (wrap) setTimeout(() => { const w = document.querySelector('.prono-table-wrap'); if(w) w.scrollLeft = scrollLeft; }, 10);
+}
+
+
+
+// =============================================
+// RENDER: PARTICIPANTES
+// =============================================
+function renderParticipantes() {
+  let html = `<div class="section-title">👥 Participantes</div>`;
+
+  if (!isAdmin) {
+    html += `<div class="info-note" style="border-left-color:var(--accent2)">🔒 Vista de solo lectura. Iniciá sesión como admin para editar.</div>`;
+    html += `<div class="part-list">`;
+    PARTICIPANTES.forEach((p, i) => {
+      html += `<div class="part-row">
+        <span class="part-num">${String(i+1).padStart(2,'0')}</span>
+        <span style="flex:1;font-size:14px;font-weight:600">${escHtml(p.nombre)}</span>
+      </div>`;
+    });
+    html += `</div>`;
+    document.getElementById('tab-participantes').innerHTML = html;
+    return;
+  }
+  html += `<div class="info-note">Editá el nombre de cada participante. Los cambios se guardan en el navegador y se reflejan en ranking y pronósticos.</div>`;
+  html += `<div class="part-list">`;
+
+  PARTICIPANTES.forEach((p, i) => {
+    html += `<div class="part-row" id="prow-${p.id}">
+      <span class="part-num">${String(i+1).padStart(2,'0')}</span>
+      <input
+        class="part-name-input"
+        id="pinput-${p.id}"
+        type="text"
+        value="${escHtml(p.nombre)}"
+        data-original="${escHtml(p.nombre)}"
+        data-pid="${p.id}"
+        oninput="onNombreInput(this)"
+        onkeydown="if(event.key==='Enter') saveNombre('${p.id}')"
+        placeholder="Nombre del participante"
+      />
+      <div class="part-actions">
+        <button class="btn-icon save" id="pbtn-${p.id}" onclick="saveNombre('${p.id}')" style="display:none" title="Guardar (Enter)">✓ Guardar</button>
+        <button class="btn-icon danger" onclick="resetNombre('${p.id}')" title="Descartar cambios">↺</button>
+      </div>
+    </div>`;
+  });
+
+  html += `</div>
+  <div class="part-save-all">
+    <button class="btn btn-primary" onclick="saveAllNombres()">💾 Guardar todos los cambios</button>
+    <span class="changes-note" id="changes-note" style="display:none">⚠ Hay cambios sin guardar</span>
+  </div>`;
+
+  document.getElementById('tab-participantes').innerHTML = html;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function onNombreInput(input) {
+  const original = input.dataset.original;
+  const changed = input.value !== original;
+  input.classList.toggle('changed', changed);
+  const btn = document.getElementById('pbtn-' + input.dataset.pid);
+  if (btn) btn.style.display = changed ? '' : 'none';
+  document.getElementById('changes-note').style.display = 'inline';
+}
+
+function saveNombre(pid) {
+  const input = document.getElementById('pinput-' + pid);
+  if (!input) return;
+  const nuevo = input.value.trim();
+  if (!nuevo) { input.value = input.dataset.original; return; }
+  const p = PARTICIPANTES.find(x => x.id === pid);
+  if (p) {
+    p.nombre = nuevo;
+    input.dataset.original = nuevo;
+    input.classList.remove('changed');
+    const btn = document.getElementById('pbtn-' + pid);
+    if (btn) btn.style.display = 'none';
+    saveNombres();
+    document.getElementById('changes-note').textContent = '✓ Guardado';
+    document.getElementById('changes-note').style.color = 'var(--green)';
+    document.getElementById('changes-note').style.display = 'inline';
+    setTimeout(() => {
+      const note = document.getElementById('changes-note');
+      if (note) { note.style.display = 'none'; note.style.color = '#f0c040'; note.textContent = '⚠ Hay cambios sin guardar'; }
+    }, 2000);
+  }
+}
+
+function resetNombre(pid) {
+  const input = document.getElementById('pinput-' + pid);
+  if (!input) return;
+  input.value = input.dataset.original;
+  input.classList.remove('changed');
+  const btn = document.getElementById('pbtn-' + pid);
+  if (btn) btn.style.display = 'none';
+}
+
+function saveAllNombres() {
+  PARTICIPANTES.forEach(p => {
+    const input = document.getElementById('pinput-' + p.id);
+    if (input && input.value.trim()) {
+      p.nombre = input.value.trim();
+      input.dataset.original = p.nombre;
+      input.classList.remove('changed');
+      const btn = document.getElementById('pbtn-' + p.id);
+      if (btn) btn.style.display = 'none';
+    }
+  });
+  saveNombres();
+  const note = document.getElementById('changes-note');
+  if (note) {
+    note.textContent = '✓ Todos guardados';
+    note.style.color = 'var(--green)';
+    note.style.display = 'inline';
+    setTimeout(() => { note.style.display = 'none'; note.style.color = '#f0c040'; note.textContent = '⚠ Hay cambios sin guardar'; }, 2000);
+  }
+}
+
+// =============================================
+// SUPABASE CONFIG
+// =============================================
+const SB_URL  = 'https://zjozynptzxzegmtokwao.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqb3p5bnB0enh6ZWdtdG9rd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjg3NjMsImV4cCI6MjA5Njg0NDc2M30.yHjrELy48fOMywyP-AiQ9ilByEY4WXXFft0vcQ0Lvk4';
+const SB_HDR  = { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
+
+async function sbGet(table, filter='') {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?${filter}&limit=10000`, { headers: SB_HDR });
+  return r.ok ? r.json() : [];
+}
+async function sbUpsert(table, body) {
+  await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { ...SB_HDR, 'Prefer': 'resolution=merge-duplicates' },
+    body: JSON.stringify(body)
+  });
+}
+
+// =============================================
+// LOAD desde Supabase al iniciar
+// =============================================
+async function loadFromSupabase() {
+  // resultados
+  const resultados = await sbGet('prode_resultados');
+  resultados.forEach(row => {
+    const p = PARTIDOS.find(x => x.id === row.id);
+    if (p) p.resultado_real = row.resultado || null;
+  });
+
+  // pronósticos editados
+  const pronos = await sbGet('prode_pronosticos');
+  pronos.forEach(row => {
+    const p = PARTIDOS.find(x => x.id === row.partido_id);
+    if (p && p.pronosticos[row.participante_id] !== undefined) {
+      p.pronosticos[row.participante_id] = row.valor;
+    }
+  });
+
+  // nombres
+  const nombresRow = await sbGet('prode_resultados', 'id=eq.__nombres__');
+  if (nombresRow.length && nombresRow[0].resultado) {
+    try {
+      const data = JSON.parse(nombresRow[0].resultado);
+      PARTICIPANTES.forEach(p => { if (data[p.id]) p.nombre = data[p.id]; });
+    } catch(e) {}
+  }
+
+  renderRanking();
+}
+
+// =============================================
+// SAVE resultados → Supabase
+// =============================================
+async function saveResultados() {
+  const rows = PARTIDOS
+    .filter(p => p.resultado_real)
+    .map(p => ({ id: p.id, resultado: p.resultado_real }));
+  // también guardamos nulls para limpiar
+  const nullRows = PARTIDOS
+    .filter(p => !p.resultado_real)
+    .map(p => ({ id: p.id, resultado: null }));
+  if (rows.length)     await sbUpsert('prode_resultados', rows);
+  if (nullRows.length) await sbUpsert('prode_resultados', nullRows);
+}
+
+// =============================================
+// SAVE pronósticos editados → Supabase
+// =============================================
+async function savePronosticos() {
+  // guardamos todos los pronósticos que fueron editados (los de dudas)
+  const rows = [];
+  PARTIDOS.forEach(p => {
+    (p.dudas || []).forEach(pid => {
+      rows.push({ partido_id: p.id, participante_id: pid, valor: p.pronosticos[pid] });
+    });
+  });
+  if (rows.length) await sbUpsert('prode_pronosticos', rows);
+}
+
+// =============================================
+// SAVE nombres → Supabase (como JSON en prode_resultados)
+// =============================================
+async function saveNombres() {
+  const data = {};
+  PARTICIPANTES.forEach(p => { data[p.id] = p.nombre; });
+  await sbUpsert('prode_resultados', [{ id: '__nombres__', resultado: JSON.stringify(data) }]);
+}
+
+// legacy stubs (por si algo los llama)
+function loadResultados() {}
+function loadPronosticos() {}
+function loadNombres() {}
+
+// =============================================
+// TABS
+// =============================================
+let currentTab = 'ranking';
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const tab = t.dataset.tab;
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentTab = tab;
+    document.querySelectorAll('[id^="tab-"]').forEach(x => x.style.display = 'none');
+    document.getElementById('tab-' + tab).style.display = '';
+    if (tab === 'ranking') renderRanking();
+    else if (tab === 'partidos') renderPartidos();
+    else if (tab === 'pronosticos') renderPronosticos();
+    else if (tab === 'participantes') renderParticipantes();
+  });
+});
+
+// init: marcar tabs locked
+document.querySelectorAll('.tab[data-tab="partidos"], .tab[data-tab="participantes"]').forEach(t => t.classList.add('tab-locked'));
+
+// =============================================
+// EXPORT CSV
+// =============================================
+function exportCSV() {
+  const ranked = calcularPuntos();
+  const headers = ['Partido','Fecha','Local','Visitante','Resultado Real', ...ranked.map(p => p.nombre)];
+  const rows = [headers.join(',')];
+  PARTIDOS.forEach(p => {
+    const row = [p.id, p.fecha, p.local, p.visitante, p.resultado_real || 'pendiente',
+      ...ranked.map(r => p.pronosticos[r.id] || '')
+    ];
+    rows.push(row.join(','));
+  });
+  rows.push('');
+  rows.push(['RANKING', ...ranked.map(r => r.nombre)].join(','));
+  rows.push(['PUNTOS', ...ranked.map(r => r.puntos)].join(','));
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'prode2026.csv'; a.click();
+}
+
+// =============================================
+// INIT — carga desde Supabase y renderiza
+// =============================================
+document.getElementById('tab-ranking').innerHTML = '<div style="color:var(--muted);padding:40px;text-align:center">⏳ Cargando datos...</div>';
+loadFromSupabase();
+
+</script>
+</body>
+</html>
