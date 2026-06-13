@@ -316,7 +316,9 @@
   .btn-icon.save { border-color: var(--green); color: var(--green); }
   .btn-icon.save:hover { background: #0d2a18; }
   .btn-icon.danger:hover { border-color: var(--accent2); color: var(--accent2); }
-  .prono-edit-select {
+  .result-anulado { background: #1a1a1a; color: #555; font-size:11px; padding:3px 8px; border-radius:3px; border:1px solid #333; font-style:italic; }
+  tr.anulado-row td { opacity:0.45; }
+  tr.anulado-row td.match-name { opacity:1; }
     background: #1a1200; border: 1px solid #f0c040; color: #f0c040;
     font-size: 11px; font-weight: 700; padding: 2px 4px;
     border-radius: 3px; cursor: pointer; font-family: var(--font-mono);
@@ -496,10 +498,10 @@ const PARTIDOS = [
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'E', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
   { id:'p26', fecha:'JUE 18/06', local:'Canadá',        visitante:'Qatar',
-    resultado_real:null,
+    resultado_real:null, anulado:true,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
   { id:'p27', fecha:'JUE 18/06', local:'México',        visitante:'Corea del Sur',
-    resultado_real:null,
+    resultado_real:null, anulado:true,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
 
   // ─── VIE 19/06 — Grupos C y D ───
@@ -663,6 +665,7 @@ function calcularPuntos() {
   PARTICIPANTES.forEach(p => { puntos[p.id] = 0; aciertos[p.id] = 0; pendientes[p.id] = 0; });
 
   PARTIDOS.forEach(partido => {
+    if (partido.anulado) return; // ignorar anulados
     if (!partido.resultado_real) {
       PARTICIPANTES.forEach(p => pendientes[p.id]++);
       return;
@@ -788,7 +791,7 @@ function renderPartidos() {
       html += '<table class="matches"><thead><tr><th class="left">Partido</th><th>Resultado</th></tr></thead><tbody>';
       psFecha.forEach(function(p) {
         const r = p.resultado_real;
-        const badge = r ? '<span class="result-badge result-' + r + '">' + (r==='L' ? p.local.split(' ')[0] : r==='V' ? p.visitante.split(' ')[0] : 'Empate') + '</span>' : '<span class="result-badge result-?">Pendiente</span>';
+        const badge = r ? '<span class="result-badge result-' + r + '">' + (r==='L' ? p.local.split(' ')[0] : r==='V' ? p.visitante.split(' ')[0] : 'Empate') + '</span>' : p.anulado ? '<span class="result-anulado">🚫 Anulado</span>' : '<span class="result-badge result-?">Pendiente</span>';
         html += '<tr><td class="match-name"><div class="teams">' + p.local + ' <span style="color:var(--muted)">vs</span> ' + p.visitante + '</div></td><td>' + badge + '</td></tr>';
       });
       html += '</tbody></table></div>';
@@ -810,23 +813,35 @@ function renderPartidos() {
 
     psFecha.forEach(function(p) {
       const r = p.resultado_real;
-      html += '<tr>';
-      html += '<td class="match-name"><div class="teams">' + p.local + ' vs ' + p.visitante + '</div><div class="local">L=' + p.local.split(' ')[0] + ' · E · V=' + p.visitante.split(' ')[0] + '</div></td>';
-      html += '<td><select class="result-select" onchange="setResultado(\'' + p.id + '\',this.value)">';
-      html += '<option value=""' + (!r?' selected':'') + '>—</option>';
-      html += '<option value="L"' + (r==='L'?' selected':'') + '>L</option>';
-      html += '<option value="E"' + (r==='E'?' selected':'') + '>E</option>';
-      html += '<option value="V"' + (r==='V'?' selected':'') + '>V</option>';
-      html += '</select></td>';
+      const isAnulado = p.anulado;
+      html += '<tr' + (isAnulado ? ' class="anulado-row"' : '') + '>';
+      html += '<td class="match-name"><div class="teams">' + p.local + ' vs ' + p.visitante + '</div>';
+      if (isAnulado) {
+        html += '<div class="local" style="color:#e05555;font-weight:700">🚫 ANULADO — no cuenta para el scoring</div>';
+      } else {
+        html += '<div class="local">L=' + p.local.split(' ')[0] + ' · E · V=' + p.visitante.split(' ')[0] + '</div>';
+      }
+      html += '</td>';
 
-      PARTICIPANTES.forEach(function(part) {
-        const prono = p.pronosticos[part.id] || 'L';
-        html += '<td><select class="result-select" style="min-width:44px;font-size:11px" onchange="setPronosticoDirecto(\'' + p.id + '\',\'' + part.id + '\',this.value)">';
-        html += '<option value="L"' + (prono==='L'?' selected':'') + '>L</option>';
-        html += '<option value="E"' + (prono==='E'?' selected':'') + '>E</option>';
-        html += '<option value="V"' + (prono==='V'?' selected':'') + '>V</option>';
+      if (isAnulado) {
+        html += '<td><span class="result-anulado">Anulado</span></td>';
+        PARTICIPANTES.forEach(function() { html += '<td style="color:#444;text-align:center">—</td>'; });
+      } else {
+        html += '<td><select class="result-select" onchange="setResultado(\'' + p.id + '\',this.value)">';
+        html += '<option value=""' + (!r?' selected':'') + '>—</option>';
+        html += '<option value="L"' + (r==='L'?' selected':'') + '>L</option>';
+        html += '<option value="E"' + (r==='E'?' selected':'') + '>E</option>';
+        html += '<option value="V"' + (r==='V'?' selected':'') + '>V</option>';
         html += '</select></td>';
-      });
+        PARTICIPANTES.forEach(function(part) {
+          const prono = p.pronosticos[part.id] || 'L';
+          html += '<td><select class="result-select" style="min-width:44px;font-size:11px" onchange="setPronosticoDirecto(\'' + p.id + '\',\'' + part.id + '\',this.value)">';
+          html += '<option value="L"' + (prono==='L'?' selected':'') + '>L</option>';
+          html += '<option value="E"' + (prono==='E'?' selected':'') + '>E</option>';
+          html += '<option value="V"' + (prono==='V'?' selected':'') + '>V</option>';
+          html += '</select></td>';
+        });
+      }
       html += '</tr>';
     });
     html += '</tbody></table></div></div>';
@@ -881,10 +896,17 @@ function renderPronosticos() {
     html += `<tr><td colspan="${2 + pidOrder.length}" style="background:#1a0800;color:var(--accent);font-weight:700;font-size:11px;padding:6px 10px;text-transform:uppercase;">${fecha}</td></tr>`;
     PARTIDOS.filter(p => p.fecha === fecha).forEach(partido => {
       const r = partido.resultado_real;
+      const isAnulado = partido.anulado;
       const dudas = partido.dudas || [];
-      html += `<tr>
-        <td class="partido">${partido.local} v ${partido.visitante}</td>
-        <td class="result-real">${r ? `<span class="result-badge result-${r}">${r}</span>` : `<span class="result-badge result-?">?</span>`}</td>`;
+
+      if (isAnulado) {
+        html += `<tr class="anulado-row">
+          <td class="partido" style="color:#e05555">🚫 ${partido.local} v ${partido.visitante}</td>
+          <td class="result-real"><span class="result-anulado">Anulado</span></td>`;
+        pidOrder.forEach(() => { html += '<td style="color:#444;text-align:center">—</td>'; });
+        html += '</tr>';
+        return;
+      }
 
       pidOrder.forEach(pid => {
         const prono = partido.pronosticos[pid];
