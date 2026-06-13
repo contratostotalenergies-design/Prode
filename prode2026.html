@@ -917,6 +917,8 @@ async function setPronosticoDirecto(partidoId, participanteId, valor) {
   await sbUpsert('prode_pronosticos', [{ partido_id: partidoId, participante_id: participanteId, valor }]);
   renderRanking();
 }
+
+async function setResultado(pid, valor) {
   const p = PARTIDOS.find(x => x.id === pid);
   if (p) {
     p.resultado_real = valor || null;
