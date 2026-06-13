@@ -397,335 +397,260 @@ const PARTICIPANTES = [
   { id: 'bernabei',  nombre: 'Bernabey Mannin' },
 ];
 
-// L = Local gana, E = Empate, V = Visitante gana
-// Formato: { id, fecha, local, visitante, resultado_real, pronosticos:{pid:L/E/V} }
-// resultado_real: null = pendiente, 'L','E','V'
-// FIXTURE OFICIAL FIFA/ESPN — fase de grupos
-
-// PRONÓSTICOS LEÍDOS DEL PDF (versión correcta, derecha)
-// Participantes en orden: santiago, contrems, epul, valeria, laysfel(=martin), delia, jefer(=lucas), natai(=matias), rama, leandro, anon11(=mariela), bernabei
+// Fixture oficial FIFA World Cup 2026 — fase de grupos
+// Pronósticos leídos del PDF (versión corregida)
+// Local/Visitante según fixture oficial Al Jazeera/ESPN
 
 const PARTIDOS = [
-  // JUE 11/06 — 2 partidos
-  { id:'p01', fecha:'JUE 11/06', local:'México', visitante:'Sudáfrica',
+  // ─── JUE 11/06 — Grupo A ───
+  { id:'p01', fecha:'JUE 11/06', local:'México',        visitante:'Sudáfrica',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Corea del Sur vs Rep. Checa
-  // S=E, C=L(tachado→L), E=L, V=E, M=L, D=L, L=L, Ma=L, Ra=L(E), Le=E, Ma2=L(ileg), B=E
   { id:'p02', fecha:'JUE 11/06', local:'Corea del Sur', visitante:'Rep. Checa',
     resultado_real:null,
     pronosticos:{ santiago:'E', contrems:'L', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'E', anon11:'L', bernabei:'E' } },
 
-  // VIE 12/06 — 2 partidos
-  { id:'p03', fecha:'VIE 12/06', local:'Canadá', visitante:'Bosnia y He.',
+  // ─── VIE 12/06 — Grupos B y D ───
+  { id:'p03', fecha:'VIE 12/06', local:'Canadá',        visitante:'Bosnia y He.',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // EEUU vs Paraguay
-  { id:'p04', fecha:'VIE 12/06', local:'EEUU', visitante:'Paraguay',
+  { id:'p04', fecha:'VIE 12/06', local:'EEUU',          visitante:'Paraguay',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'E', leandro:'V', anon11:'L', bernabei:'L' } },
 
-  // SÁB 13/06 — 3 partidos
-  // Qatar vs Suiza
-  { id:'p05', fecha:'SÁB 13/06', local:'Qatar', visitante:'Suiza',
+  // ─── SÁB 13/06 — Grupos B, C y D ───
+  { id:'p05', fecha:'SÁB 13/06', local:'Qatar',         visitante:'Suiza',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Brasil vs Marruecos
-  { id:'p06', fecha:'SÁB 13/06', local:'Brasil', visitante:'Marruecos',
+  { id:'p06', fecha:'SÁB 13/06', local:'Brasil',        visitante:'Marruecos',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'E' } },
-  // Haití vs Escocia
-  { id:'p07', fecha:'SÁB 13/06', local:'Haití', visitante:'Escocia',
+  { id:'p07', fecha:'SÁB 13/06', local:'Haití',         visitante:'Escocia',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'E', valeria:'V', laysfel:'V', delia:'V', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-
-  // DOM 14/06 — 5 partidos
-  // Australia vs Turquía
-  { id:'p07b', fecha:'DOM 14/06', local:'Australia', visitante:'Turquía',
+  { id:'p07b', fecha:'SÁB 13/06', local:'Australia',    visitante:'Turquía',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Alemania vs Curazao
-  { id:'p08', fecha:'DOM 14/06', local:'Alemania', visitante:'Curazao',
+
+  // ─── DOM 14/06 — Grupos E y F ───
+  { id:'p08', fecha:'DOM 14/06', local:'Alemania',      visitante:'Curazao',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Países Bajos vs Japón
-  { id:'p09', fecha:'DOM 14/06', local:'Países Bajos', visitante:'Japón',
-    resultado_real:null,
-    pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'E', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'E' } },
-  // Costa de Marfil vs Ecuador
-  { id:'p10', fecha:'DOM 14/06', local:'Costa de Ma.', visitante:'Ecuador',
+  { id:'p09', fecha:'DOM 14/06', local:'Costa de Ma.',  visitante:'Ecuador',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Suecia vs Túnez
-  { id:'p11', fecha:'DOM 14/06', local:'Suecia', visitante:'Túnez',
+  { id:'p10', fecha:'DOM 14/06', local:'Países Bajos',  visitante:'Japón',
+    resultado_real:null,
+    pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'E', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'E' } },
+  { id:'p11', fecha:'DOM 14/06', local:'Suecia',        visitante:'Túnez',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
 
-  // LUN 15/06 — 4 partidos
-  // España vs Cabo Verde
-  { id:'p13', fecha:'LUN 15/06', local:'España', visitante:'Cabo Verde',
+  // ─── LUN 15/06 — Grupos G y H ───
+  { id:'p12', fecha:'LUN 15/06', local:'España',        visitante:'Cabo Verde',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Bélgica vs Egipto
-  { id:'p14', fecha:'LUN 15/06', local:'Bélgica', visitante:'Egipto',
+  { id:'p13', fecha:'LUN 15/06', local:'Bélgica',       visitante:'Egipto',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Arabia Saudita vs Uruguay
-  { id:'p15', fecha:'LUN 15/06', local:'Arabia Saud.', visitante:'Uruguay',
+  { id:'p14', fecha:'LUN 15/06', local:'Arabia Saud.',  visitante:'Uruguay',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'L', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'E', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Irán vs N. Zelanda
-  { id:'p16', fecha:'LUN 15/06', local:'Irán', visitante:'N. Zelanda',
+  { id:'p15', fecha:'LUN 15/06', local:'Irán',          visitante:'N. Zelanda',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'L', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'L' } },
 
-  // MAR 16/06 — 3 partidos
-  // Francia vs Senegal
-  { id:'p18', fecha:'MAR 16/06', local:'Francia', visitante:'Senegal',
+  // ─── MAR 16/06 — Grupos I y J ───
+  { id:'p16', fecha:'MAR 16/06', local:'Francia',       visitante:'Senegal',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Irak vs Noruega
-  { id:'p19', fecha:'MAR 16/06', local:'Irak', visitante:'Noruega',
+  { id:'p17', fecha:'MAR 16/06', local:'Irak',          visitante:'Noruega',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'E', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'V' } },
-  // Argentina vs Argelia
-  { id:'p20', fecha:'MAR 16/06', local:'Argentina', visitante:'Argelia',
+  { id:'p18', fecha:'MAR 16/06', local:'Argentina',     visitante:'Argelia',
+    resultado_real:null,
+    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
+  { id:'p19', fecha:'MAR 16/06', local:'Austria',       visitante:'Jordania',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
 
-  // MIÉ 17/06 — 5 partidos
-  // Austria vs Jordania
-  { id:'p21', fecha:'MIÉ 17/06', local:'Austria', visitante:'Jordania',
-    resultado_real:null,
-    pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Portugal vs R.D. Congo
-  { id:'p22', fecha:'MIÉ 17/06', local:'Portugal', visitante:'R.D. Congo',
+  // ─── MIÉ 17/06 — Grupos K y L ───
+  { id:'p20', fecha:'MIÉ 17/06', local:'Portugal',      visitante:'R.D. Congo',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Inglaterra vs Croacia
-  { id:'p23', fecha:'MIÉ 17/06', local:'Inglaterra', visitante:'Croacia',
+  { id:'p21', fecha:'MIÉ 17/06', local:'Inglaterra',    visitante:'Croacia',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'E', anon11:'L', bernabei:'L' } },
-  // Ghana vs Panamá
-  { id:'p24', fecha:'MIÉ 17/06', local:'Ghana', visitante:'Panamá',
+  { id:'p22', fecha:'MIÉ 17/06', local:'Ghana',         visitante:'Panamá',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Uzbekistán vs Colombia
-  { id:'p25', fecha:'MIÉ 17/06', local:'Uzbekistán', visitante:'Colombia',
+  { id:'p23', fecha:'MIÉ 17/06', local:'Uzbekistán',    visitante:'Colombia',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
 
-  // JUE 18/06 — 4 partidos
-  // Rep. Checa vs Sudáfrica
-  { id:'p26', fecha:'JUE 18/06', local:'Rep. Checa', visitante:'Sudáfrica',
+  // ─── JUE 18/06 — Grupos A y B ───
+  { id:'p24', fecha:'JUE 18/06', local:'Rep. Checa',    visitante:'Sudáfrica',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Suiza vs Bosnia y He.
-  { id:'p27', fecha:'JUE 18/06', local:'Suiza', visitante:'Bosnia y He.',
+  { id:'p25', fecha:'JUE 18/06', local:'Suiza',         visitante:'Bosnia y He.',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'E', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
-  // Canadá vs Qatar
-  { id:'p28', fecha:'JUE 18/06', local:'Canadá', visitante:'Qatar',
+  { id:'p26', fecha:'JUE 18/06', local:'Canadá',        visitante:'Qatar',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
-  // México vs Corea del Sur
-  { id:'p29', fecha:'JUE 18/06', local:'México', visitante:'Corea del Sur',
+  { id:'p27', fecha:'JUE 18/06', local:'México',        visitante:'Corea del Sur',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
 
-  // VIE 19/06 — 4 partidos
-  // EEUU vs Australia
-  { id:'p30', fecha:'VIE 19/06', local:'EEUU', visitante:'Australia',
+  // ─── VIE 19/06 — Grupos C y D ───
+  { id:'p28', fecha:'VIE 19/06', local:'EEUU',          visitante:'Australia',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Escocia vs Marruecos
-  { id:'p31', fecha:'VIE 19/06', local:'Escocia', visitante:'Marruecos',
+  { id:'p29', fecha:'VIE 19/06', local:'Escocia',       visitante:'Marruecos',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'E', anon11:'L', bernabei:'L' } },
-  // Brasil vs Haití
-  { id:'p32', fecha:'VIE 19/06', local:'Brasil', visitante:'Haití',
+  { id:'p30', fecha:'VIE 19/06', local:'Brasil',        visitante:'Haití',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Turquía vs Paraguay
-  { id:'p33', fecha:'VIE 19/06', local:'Turquía', visitante:'Paraguay',
+  { id:'p31', fecha:'VIE 19/06', local:'Turquía',       visitante:'Paraguay',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'V', anon11:'L', bernabei:'L' } },
 
-  // SÁB 20/06 — 3 partidos
-  // Países Bajos vs Suecia
-  { id:'p35', fecha:'SÁB 20/06', local:'Países Bajos', visitante:'Suecia',
+  // ─── SÁB 20/06 — Grupos E y F ───
+  { id:'p32', fecha:'SÁB 20/06', local:'Países Bajos',  visitante:'Suecia',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Alemania vs Costa de Marfil
-  { id:'p36', fecha:'SÁB 20/06', local:'Alemania', visitante:'Costa de Ma.',
+  { id:'p33', fecha:'SÁB 20/06', local:'Alemania',      visitante:'Costa de Ma.',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Ecuador vs Curazao
-  { id:'p37', fecha:'SÁB 20/06', local:'Ecuador', visitante:'Curazao',
+  { id:'p34', fecha:'SÁB 20/06', local:'Ecuador',       visitante:'Curazao',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-
-  // DOM 21/06 — 5 partidos
-  // Túnez vs Japón
-  { id:'p38', fecha:'DOM 21/06', local:'Túnez', visitante:'Japón',
+  { id:'p35', fecha:'SÁB 20/06', local:'Túnez',         visitante:'Japón',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // España vs Arabia Saudita
-  { id:'p39', fecha:'DOM 21/06', local:'España', visitante:'Arabia Saud.',
+
+  // ─── DOM 21/06 — Grupos G y H ───
+  { id:'p36', fecha:'DOM 21/06', local:'España',        visitante:'Arabia Saud.',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Uruguay vs Cabo Verde
-  { id:'p41', fecha:'DOM 21/06', local:'Uruguay', visitante:'Cabo Verde',
+  { id:'p37', fecha:'DOM 21/06', local:'Bélgica',       visitante:'Irán',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Bélgica vs Irán
-  { id:'p40', fecha:'DOM 21/06', local:'Bélgica', visitante:'Irán',
+  { id:'p38', fecha:'DOM 21/06', local:'Uruguay',       visitante:'Cabo Verde',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // N. Zelanda vs Egipto
-  { id:'p42', fecha:'DOM 21/06', local:'N. Zelanda', visitante:'Egipto',
+  { id:'p39', fecha:'DOM 21/06', local:'N. Zelanda',    visitante:'Egipto',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'E', rama:'V', leandro:'E', anon11:'L', bernabei:'V' } },
 
-  // LUN 22/06 — 4 partidos
-  // Argentina vs Austria
-  { id:'p43', fecha:'LUN 22/06', local:'Argentina', visitante:'Austria',
+  // ─── LUN 22/06 — Grupos I y J ───
+  { id:'p40', fecha:'LUN 22/06', local:'Argentina',     visitante:'Austria',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Francia vs Irak
-  { id:'p44', fecha:'LUN 22/06', local:'Francia', visitante:'Irak',
+  { id:'p41', fecha:'LUN 22/06', local:'Francia',       visitante:'Irak',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Noruega vs Senegal
-  { id:'p45', fecha:'LUN 22/06', local:'Noruega', visitante:'Senegal',
+  { id:'p42', fecha:'LUN 22/06', local:'Noruega',       visitante:'Senegal',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'L', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Jordania vs Argelia
-  { id:'p46', fecha:'LUN 22/06', local:'Jordania', visitante:'Argelia',
+  { id:'p43', fecha:'LUN 22/06', local:'Jordania',      visitante:'Argelia',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
 
-  // MAR 23/06 — 4 partidos
-  // Portugal vs Uzbekistán
-  { id:'p47', fecha:'MAR 23/06', local:'Portugal', visitante:'Uzbekistán',
+  // ─── MAR 23/06 — Grupos K y L ───
+  { id:'p44', fecha:'MAR 23/06', local:'Portugal',      visitante:'Uzbekistán',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Inglaterra vs Ghana
-  { id:'p48', fecha:'MAR 23/06', local:'Inglaterra', visitante:'Ghana',
+  { id:'p45', fecha:'MAR 23/06', local:'Inglaterra',    visitante:'Ghana',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
-  // Panamá vs Croacia
-  { id:'p49', fecha:'MAR 23/06', local:'Panamá', visitante:'Croacia',
+  { id:'p46', fecha:'MAR 23/06', local:'Panamá',        visitante:'Croacia',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'V', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Colombia vs R.D. Congo
-  { id:'p50', fecha:'MAR 23/06', local:'Colombia', visitante:'R.D. Congo',
+  { id:'p47', fecha:'MAR 23/06', local:'Colombia',      visitante:'R.D. Congo',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'V', leandro:'L', anon11:'L', bernabei:'L' } },
 
-  // MIÉ 24/06 — 6 partidos
-  // Canadá vs Suiza
-  { id:'p51', fecha:'MIÉ 24/06', local:'Canadá', visitante:'Suiza',
+  // ─── MIÉ 24/06 — Grupos A, B y C ───  (partidos simultáneos)
+  { id:'p48', fecha:'MIÉ 24/06', local:'Suiza',         visitante:'Canadá',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'E', anon11:'L', bernabei:'L' } },
-  // Bosnia vs Qatar
-  { id:'p52', fecha:'MIÉ 24/06', local:'Bosnia y He.', visitante:'Qatar',
+  { id:'p49', fecha:'MIÉ 24/06', local:'Bosnia y He.',  visitante:'Qatar',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'E', anon11:'L', bernabei:'L' } },
-  // Escocia vs Brasil
-  { id:'p54', fecha:'MIÉ 24/06', local:'Escocia', visitante:'Brasil',
+  { id:'p50', fecha:'MIÉ 24/06', local:'Escocia',       visitante:'Brasil',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Marruecos vs Haití
-  { id:'p53', fecha:'MIÉ 24/06', local:'Marruecos', visitante:'Haití',
+  { id:'p51', fecha:'MIÉ 24/06', local:'Marruecos',     visitante:'Haití',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // México vs Rep. Checa
-  { id:'p56', fecha:'MIÉ 24/06', local:'México', visitante:'Rep. Checa',
+  { id:'p52', fecha:'MIÉ 24/06', local:'Rep. Checa',    visitante:'México',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'E' } },
-  // Sudáfrica vs Corea del Sur
-  { id:'p55', fecha:'MIÉ 24/06', local:'Sudáfrica', visitante:'Corea del Sur',
+  { id:'p53', fecha:'MIÉ 24/06', local:'Sudáfrica',     visitante:'Corea del Sur',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
 
-  // JUE 25/06 — 6 partidos
-  // Ecuador vs Alemania
-  { id:'p62', fecha:'JUE 25/06', local:'Ecuador', visitante:'Alemania',
+  // ─── JUE 25/06 — Grupos D, E y F ───
+  { id:'p54', fecha:'JUE 25/06', local:'Ecuador',       visitante:'Alemania',
     resultado_real:null,
     pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Curazao vs Costa de Marfil
-  { id:'p61', fecha:'JUE 25/06', local:'Curazao', visitante:'Costa de Ma.',
+  { id:'p55', fecha:'JUE 25/06', local:'Curazao',       visitante:'Costa de Ma.',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Túnez vs Países Bajos
-  { id:'p64', fecha:'JUE 25/06', local:'Túnez', visitante:'Países Bajos',
-    resultado_real:null,
-    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Japón vs Suecia
-  { id:'p63', fecha:'JUE 25/06', local:'Japón', visitante:'Suecia',
+  { id:'p56', fecha:'JUE 25/06', local:'Japón',         visitante:'Suecia',
     resultado_real:null,
     pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'E', anon11:'L', bernabei:'L' } },
-  // EEUU vs Turquía
-  { id:'p57', fecha:'JUE 25/06', local:'EEUU', visitante:'Turquía',
+  { id:'p57', fecha:'JUE 25/06', local:'Túnez',         visitante:'Países Bajos',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  { id:'p58', fecha:'JUE 25/06', local:'Turquía',       visitante:'EEUU',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'V' } },
-  // Paraguay vs Australia
-  { id:'p58', fecha:'JUE 25/06', local:'Paraguay', visitante:'Australia',
+  { id:'p59', fecha:'JUE 25/06', local:'Paraguay',      visitante:'Australia',
     resultado_real:null,
     pronosticos:{ santiago:'E', contrems:'V', epul:'L', valeria:'E', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'E', leandro:'L', anon11:'L', bernabei:'L' } },
 
-  // VIE 26/06 — 6 partidos
-  // Noruega vs Francia
-  { id:'p70', fecha:'VIE 26/06', local:'Noruega', visitante:'Francia',
+  // ─── VIE 26/06 — Grupos G, H e I ───
+  { id:'p60', fecha:'VIE 26/06', local:'Noruega',       visitante:'Francia',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Senegal vs Irak
-  { id:'p72', fecha:'VIE 26/06', local:'Senegal', visitante:'Irak',
+  { id:'p61', fecha:'VIE 26/06', local:'Senegal',       visitante:'Irak',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Uruguay vs España
-  { id:'p66', fecha:'VIE 26/06', local:'Uruguay', visitante:'España',
+  { id:'p62', fecha:'VIE 26/06', local:'Cabo Verde',    visitante:'Arabia Saud.',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Cabo Verde vs Arabia Saudita
-  { id:'p65', fecha:'VIE 26/06', local:'Cabo Verde', visitante:'Arabia Saud.',
+  { id:'p63', fecha:'VIE 26/06', local:'Uruguay',       visitante:'España',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // N. Zelanda vs Bélgica
-  { id:'p67', fecha:'VIE 26/06', local:'N. Zelanda', visitante:'Bélgica',
-    resultado_real:null,
-    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Egipto vs Irán
-  { id:'p68', fecha:'VIE 26/06', local:'Egipto', visitante:'Irán',
+  { id:'p64', fecha:'VIE 26/06', local:'Egipto',        visitante:'Irán',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'V', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-
-  // SÁB 27/06 — 6 partidos
-  // Panamá vs Inglaterra
-  { id:'p74', fecha:'SÁB 27/06', local:'Panamá', visitante:'Inglaterra',
+  { id:'p65', fecha:'VIE 26/06', local:'N. Zelanda',    visitante:'Bélgica',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Croacia vs Ghana (⚠ p75 en fixture, pero en planilla dice Ghana vs Colombia — revisar)
-  { id:'p75', fecha:'SÁB 27/06', local:'Croacia', visitante:'Ghana',
+
+  // ─── SÁB 27/06 — Grupos J, K y L ───
+  { id:'p66', fecha:'SÁB 27/06', local:'Panamá',        visitante:'Inglaterra',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  { id:'p67', fecha:'SÁB 27/06', local:'Croacia',       visitante:'Ghana',
     resultado_real:null,
     pronosticos:{ santiago:'L', contrems:'V', epul:'L', valeria:'L', laysfel:'L', delia:'L', jefer:'L', natai:'L', rama:'L', leandro:'L', anon11:'L', bernabei:'L' } },
-  // Colombia vs Portugal
-  { id:'p73', fecha:'SÁB 27/06', local:'Colombia', visitante:'Portugal',
+  { id:'p68', fecha:'SÁB 27/06', local:'Colombia',      visitante:'Portugal',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // R.D. Congo vs Uzbekistán
-  { id:'p76', fecha:'SÁB 27/06', local:'R.D. Congo', visitante:'Uzbekistán',
+  { id:'p69', fecha:'SÁB 27/06', local:'R.D. Congo',    visitante:'Uzbekistán',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Jordania vs Argentina
-  { id:'p69', fecha:'SÁB 27/06', local:'Jordania', visitante:'Argentina',
-    resultado_real:null,
-    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
-  // Argelia vs Austria
-  { id:'p71', fecha:'SÁB 27/06', local:'Argelia', visitante:'Austria',
+  { id:'p70', fecha:'SÁB 27/06', local:'Argelia',       visitante:'Austria',
     resultado_real:null,
     pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'V', jefer:'V', natai:'L', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
+  { id:'p71', fecha:'SÁB 27/06', local:'Jordania',      visitante:'Argentina',
+    resultado_real:null,
+    pronosticos:{ santiago:'V', contrems:'V', epul:'V', valeria:'V', laysfel:'L', delia:'L', jefer:'V', natai:'V', rama:'V', leandro:'V', anon11:'L', bernabei:'V' } },
 ];
 
 // =============================================
