@@ -853,66 +853,70 @@ function renderRanking() {
 // =============================================
 function renderPartidos() {
   const fechas = [...new Set(PARTIDOS.map(p => p.fecha))];
-  let html = `<div class="section-title">📅 Resultados reales</div>`;
+  let html = '<div class="section-title">📅 Resultados reales</div>';
 
   if (!isAdmin) {
-    html += `<div class="info-note" style="border-left-color:var(--accent2)">🔒 Vista de solo lectura. Iniciá sesión como admin para cargar resultados.</div>`;
-    fechas.forEach(fecha => {
-      const psFecha = PARTIDOS.filter(p => p.fecha === fecha);
-      html += `<div class="day-block">
-        <div class="day-header">${fecha} — ${psFecha.length} partido${psFecha.length > 1 ? 's' : ''}</div>
-        <table class="matches"><thead><tr>
-          <th class="left">Partido</th><th>Resultado</th>
-        </tr></thead><tbody>`;
-      psFecha.forEach(p => {
+    html += '<div class="info-note" style="border-left-color:var(--accent2)">🔒 Vista de solo lectura. Iniciá sesión como admin para cargar resultados.</div>';
+    fechas.forEach(function(fecha) {
+      const psFecha = PARTIDOS.filter(function(p){ return p.fecha === fecha; });
+      html += '<div class="day-block"><div class="day-header">' + fecha + ' — ' + psFecha.length + ' partido' + (psFecha.length > 1 ? 's' : '') + '</div>';
+      html += '<table class="matches"><thead><tr><th class="left">Partido</th><th>Resultado</th></tr></thead><tbody>';
+      psFecha.forEach(function(p) {
         const r = p.resultado_real;
-        html += `<tr>
-          <td class="match-name">
-            <div class="teams">${p.local} <span style="color:var(--muted)">vs</span> ${p.visitante}</div>
-          </td>
-          <td>${r ? `<span class="result-badge result-${r}">${r === 'L' ? p.local.split(' ')[0] : r === 'V' ? p.visitante.split(' ')[0] : 'Empate'}</span>` : `<span class="result-badge result-?">Pendiente</span>`}</td>
-        </tr>`;
+        const badge = r ? '<span class="result-badge result-' + r + '">' + (r==='L' ? p.local.split(' ')[0] : r==='V' ? p.visitante.split(' ')[0] : 'Empate') + '</span>' : '<span class="result-badge result-?">Pendiente</span>';
+        html += '<tr><td class="match-name"><div class="teams">' + p.local + ' <span style="color:var(--muted)">vs</span> ' + p.visitante + '</div></td><td>' + badge + '</td></tr>';
       });
-      html += `</tbody></table></div>`;
+      html += '</tbody></table></div>';
     });
     document.getElementById('tab-partidos').innerHTML = html;
     return;
   }
 
-  html += `<div class="info-note">Seleccioná el resultado real de cada partido. Los puntos se actualizan automáticamente.</div>`;
-  fechas.forEach(fecha => {
-    const psFecha = PARTIDOS.filter(p => p.fecha === fecha);
-    html += `<div class="day-block">
-      <div class="day-header">${fecha} — ${psFecha.length} partido${psFecha.length > 1 ? 's' : ''}</div>
-      <table class="matches">
-        <thead><tr>
-          <th class="left">Partido</th>
-          <th>Resultado real</th>
-        </tr></thead>
-        <tbody>`;
-    psFecha.forEach(p => {
+  // ADMIN: tabla con resultado real + pronósticos editables
+  const pHeaders = PARTICIPANTES.map(function(p){ return '<th style="font-size:10px;padding:4px 3px">' + p.nombre.split(' ')[0] + '</th>'; }).join('');
+
+  html += '<div class="info-note">Resultado real + pronósticos editables por participante.</div>';
+  fechas.forEach(function(fecha) {
+    const psFecha = PARTIDOS.filter(function(p){ return p.fecha === fecha; });
+    html += '<div class="day-block"><div class="day-header">' + fecha + ' — ' + psFecha.length + ' partido' + (psFecha.length > 1 ? 's' : '') + '</div>';
+    html += '<div style="overflow-x:auto"><table class="matches"><thead><tr>';
+    html += '<th class="left">Partido</th><th>Resultado</th>' + pHeaders;
+    html += '</tr></thead><tbody>';
+
+    psFecha.forEach(function(p) {
       const r = p.resultado_real;
-      html += `<tr>
-        <td class="match-name">
-          <div class="teams">${p.local} <span style="color:var(--muted)">vs</span> ${p.visitante}</div>
-          <div class="local">L=${p.local} · E=Empate · V=${p.visitante}</div>
-        </td>
-        <td>
-          <select class="result-select" onchange="setResultado('${p.id}', this.value)">
-            <option value="" ${!r ? 'selected' : ''}>— pendiente —</option>
-            <option value="L" ${r==='L' ? 'selected' : ''}>L (${p.local.split(' ')[0]})</option>
-            <option value="E" ${r==='E' ? 'selected' : ''}>E (Empate)</option>
-            <option value="V" ${r==='V' ? 'selected' : ''}>V (${p.visitante.split(' ')[0]})</option>
-          </select>
-        </td>
-      </tr>`;
+      html += '<tr>';
+      html += '<td class="match-name"><div class="teams">' + p.local + ' vs ' + p.visitante + '</div><div class="local">L=' + p.local.split(' ')[0] + ' · E · V=' + p.visitante.split(' ')[0] + '</div></td>';
+      html += '<td><select class="result-select" onchange="setResultado(\'' + p.id + '\',this.value)">';
+      html += '<option value=""' + (!r?' selected':'') + '>—</option>';
+      html += '<option value="L"' + (r==='L'?' selected':'') + '>L</option>';
+      html += '<option value="E"' + (r==='E'?' selected':'') + '>E</option>';
+      html += '<option value="V"' + (r==='V'?' selected':'') + '>V</option>';
+      html += '</select></td>';
+
+      PARTICIPANTES.forEach(function(part) {
+        const prono = p.pronosticos[part.id] || 'L';
+        html += '<td><select class="result-select" style="min-width:44px;font-size:11px" onchange="setPronosticoDirecto(\'' + p.id + '\',\'' + part.id + '\',this.value)">';
+        html += '<option value="L"' + (prono==='L'?' selected':'') + '>L</option>';
+        html += '<option value="E"' + (prono==='E'?' selected':'') + '>E</option>';
+        html += '<option value="V"' + (prono==='V'?' selected':'') + '>V</option>';
+        html += '</select></td>';
+      });
+      html += '</tr>';
     });
-    html += `</tbody></table></div>`;
+    html += '</tbody></table></div></div>';
   });
   document.getElementById('tab-partidos').innerHTML = html;
 }
 
-async function setResultado(pid, valor) {
+async function setPronosticoDirecto(partidoId, participanteId, valor) {
+  if (!isAdmin) return;
+  const partido = PARTIDOS.find(p => p.id === partidoId);
+  if (!partido) return;
+  partido.pronosticos[participanteId] = valor;
+  await sbUpsert('prode_pronosticos', [{ partido_id: partidoId, participante_id: participanteId, valor }]);
+  renderRanking();
+}
   const p = PARTIDOS.find(x => x.id === pid);
   if (p) {
     p.resultado_real = valor || null;
