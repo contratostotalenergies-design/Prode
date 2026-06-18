@@ -316,6 +316,31 @@
   .btn-icon.save { border-color: var(--green); color: var(--green); }
   .btn-icon.save:hover { background: #0d2a18; }
   .btn-icon.danger:hover { border-color: var(--accent2); color: var(--accent2); }
+  /* ESTADÍSTICAS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .stat-card-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; font-weight: 700; }
+  .stat-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .stat-bar-label { font-size: 12px; min-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stat-bar-track { flex: 1; background: var(--border); border-radius: 3px; height: 8px; overflow: hidden; }
+  .stat-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+  .stat-bar-val { font-size: 11px; color: var(--muted); min-width: 32px; text-align: right; font-family: var(--font-mono); }
+  .stat-big { font-size: 32px; font-weight: 900; color: var(--accent); font-family: var(--font-mono); }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .stat-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  .stat-kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; }
+  .stat-kpi-val { font-size: 26px; font-weight: 900; color: var(--accent); font-family: var(--font-mono); }
+  .stat-kpi-lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .streak-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; margin-left: 6px; }
+  .streak-hot { background: #2d1000; color: #ff7040; border: 1px solid #ff7040; }
+  .streak-cold { background: #001020; color: #4080ff; border: 1px solid #4080ff; }
+  table.stat-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.stat-table th { color: var(--muted); font-size: 11px; padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; font-weight: 600; }
+  table.stat-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  table.stat-table tr:last-child td { border-bottom: none; }
+  table.stat-table td.num { text-align: right; font-family: var(--font-mono); color: var(--accent); font-weight: 700; }
+  .no-data-note { color: var(--muted); font-size: 13px; text-align: center; padding: 32px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); }
+
   .result-anulado { background: #1a1a1a; color: #555; font-size:11px; padding:3px 8px; border-radius:3px; border:1px solid #333; font-style:italic; }
   tr.anulado-row td { opacity:0.45; }
   tr.anulado-row td.match-name { opacity:1; }
@@ -369,6 +394,7 @@
   <button class="tab active" data-tab="ranking">🏆 Ranking</button>
   <button class="tab" data-tab="partidos">📅 Partidos</button>
   <button class="tab" data-tab="pronosticos">📋 Pronósticos</button>
+  <button class="tab" data-tab="stats">📊 Estadísticas</button>
   <button class="tab" data-tab="participantes">👥 Participantes</button>
 </div>
 
@@ -376,6 +402,7 @@
   <div id="tab-ranking"></div>
   <div id="tab-partidos" style="display:none"></div>
   <div id="tab-pronosticos" style="display:none"></div>
+  <div id="tab-stats" style="display:none"></div>
   <div id="tab-participantes" style="display:none"></div>
 </div>
 
@@ -1173,8 +1200,223 @@ function loadPronosticos() {}
 function loadNombres() {}
 
 // =============================================
-// TABS
+// RENDER: ESTADÍSTICAS
 // =============================================
+function renderStats() {
+  const jugados = PARTIDOS.filter(p => !p.anulado && p.resultado_real);
+  const total = PARTIDOS.filter(p => !p.anulado).length;
+  const locales = jugados.filter(p => p.resultado_real === 'L').length;
+  const empates = jugados.filter(p => p.resultado_real === 'E').length;
+  const visitantes = jugados.filter(p => p.resultado_real === 'V').length;
+  const n = jugados.length;
+
+  if (n === 0) {
+    document.getElementById('tab-stats').innerHTML =
+      '<div class="section-title">📊 Estadísticas</div><div class="no-data-note">⏳ Aún no hay resultados cargados. Las estadísticas aparecen automáticamente a medida que se juegan los partidos.</div>';
+    return;
+  }
+
+  const ranked = calcularPuntos();
+
+  // ── 1. Tendencia de resultados (L/E/V %)
+  const pctL = n ? Math.round(locales/n*100) : 0;
+  const pctE = n ? Math.round(empates/n*100) : 0;
+  const pctV = n ? Math.round(visitantes/n*100) : 0;
+
+  // ── 2. Acierto por participante
+  const pctAcierto = ranked.map(p => ({
+    nombre: p.nombre,
+    pct: n ? Math.round(p.aciertos/n*100) : 0,
+    aciertos: p.aciertos,
+  })).sort((a,b) => b.pct - a.pct);
+
+  // ── 3. Mejor racha activa por participante
+  function calcRacha(pid) {
+    const resultadosJugados = jugados; // ya ordenados por posición en array
+    let rachaAct = 0, rachaMej = 0, rachaActSign = 0;
+    for (const p of resultadosJugados) {
+      if (p.pronosticos[pid] === p.resultado_real) {
+        rachaAct++; if (rachaAct > rachaMej) rachaMej = rachaAct;
+      } else { rachaAct = 0; }
+    }
+    rachaActSign = rachaAct;
+    // racha actual de fallos
+    let rachaFallo = 0;
+    for (let i = resultadosJugados.length-1; i >= 0; i--) {
+      if (resultadosJugados[i].pronosticos[pid] !== resultadosJugados[i].resultado_real) rachaFallo++;
+      else break;
+    }
+    return { mejor: rachaMej, activa: rachaActSign, fallos: rachaFallo };
+  }
+
+  const rachas = ranked.map(p => ({ nombre: p.nombre, id: p.id, ...calcRacha(p.id) }));
+  const mejorRacha = [...rachas].sort((a,b) => b.mejor - a.mejor)[0];
+  const rachaMasActiva = [...rachas].filter(r => r.activa > 0).sort((a,b) => b.activa - a.activa)[0];
+  const peorRacha = [...rachas].sort((a,b) => b.fallos - a.fallos)[0];
+
+  // ── 4. Partido más acertado / menos acertado
+  const aciertoPorPartido = jugados.map(p => {
+    const ok = PARTICIPANTES.filter(part => p.pronosticos[part.id] === p.resultado_real).length;
+    return { label: p.local + ' vs ' + p.visitante, ok, total: PARTICIPANTES.length, pct: Math.round(ok/PARTICIPANTES.length*100) };
+  }).sort((a,b) => b.pct - a.pct);
+  const masAcertado = aciertoPorPartido[0];
+  const menosAcertado = aciertoPorPartido[aciertoPorPartido.length-1];
+
+  // ── 5. Quién apostó más a local / visitante / empate
+  function contarTipo(pid, tipo) {
+    return PARTIDOS.filter(p => !p.anulado && p.pronosticos[pid] === tipo).length;
+  }
+  const masLocal = ranked.map(p => ({ nombre: p.nombre, n: contarTipo(p.id, 'L') })).sort((a,b) => b.n-a.n)[0];
+  const masVisit = ranked.map(p => ({ nombre: p.nombre, n: contarTipo(p.id, 'V') })).sort((a,b) => b.n-a.n)[0];
+  const masEmpate = ranked.map(p => ({ nombre: p.nombre, n: contarTipo(p.id, 'E') })).sort((a,b) => b.n-a.n)[0];
+
+  // ── 6. % acierto por tipo de resultado
+  function aciertoPorTipo(tipo) {
+    const partsTipo = jugados.filter(p => p.resultado_real === tipo);
+    if (!partsTipo.length) return 0;
+    const totalOk = partsTipo.reduce((acc, p) => {
+      return acc + PARTICIPANTES.filter(part => p.pronosticos[part.id] === tipo).length;
+    }, 0);
+    return Math.round(totalOk / (partsTipo.length * PARTICIPANTES.length) * 100);
+  }
+  const pctAciertoL = aciertoPorTipo('L');
+  const pctAciertoE = aciertoPorTipo('E');
+  const pctAciertoV = aciertoPorTipo('V');
+
+  // ── 7. Sorpresómetro: partidos donde NADIE acertó
+  const nadieAcerto = jugados.filter(p => {
+    return PARTICIPANTES.every(part => p.pronosticos[part.id] !== p.resultado_real);
+  });
+  // Partidos donde TODOS acertaron
+  const todosAcertaron = jugados.filter(p => {
+    return PARTICIPANTES.every(part => p.pronosticos[part.id] === p.resultado_real);
+  });
+
+  // ── RENDER ──
+  let html = '<div class="section-title">📊 Estadísticas del Prode <span class="badge live">● LIVE</span></div>';
+
+  // KPIs
+  html += '<div class="stat-kpi-grid">';
+  html += '<div class="stat-kpi"><div class="stat-kpi-val">' + n + '/' + total + '</div><div class="stat-kpi-lbl">Partidos jugados</div></div>';
+  html += '<div class="stat-kpi"><div class="stat-kpi-val">' + pctL + '%</div><div class="stat-kpi-lbl">Gana local</div></div>';
+  html += '<div class="stat-kpi"><div class="stat-kpi-val">' + pctV + '%</div><div class="stat-kpi-lbl">Gana visitante</div></div>';
+  html += '<div class="stat-kpi"><div class="stat-kpi-val">' + pctE + '%</div><div class="stat-kpi-lbl">Empates</div></div>';
+  html += '<div class="stat-kpi"><div class="stat-kpi-val">' + nadieAcerto.length + '</div><div class="stat-kpi-lbl">Sorpresas (nadie acertó)</div></div>';
+  html += '<div class="stat-kpi"><div class="stat-kpi-val">' + todosAcertaron.length + '</div><div class="stat-kpi-lbl">Partidos unánimes ✓</div></div>';
+  html += '</div>';
+
+  html += '<div class="stats-grid">';
+
+  // Distribución L/E/V
+  html += '<div class="stat-card"><div class="stat-card-title">⚽ Distribución de resultados</div>';
+  const barData = [
+    { lbl: 'Local gana', val: locales, pct: pctL, color: '#27ae60' },
+    { lbl: 'Visitante gana', val: visitantes, pct: pctV, color: '#e74c3c' },
+    { lbl: 'Empate', val: empates, pct: pctE, color: '#3498db' },
+  ];
+  barData.forEach(function(b) {
+    html += '<div class="stat-bar-row"><span class="stat-bar-label">' + b.lbl + '</span><div class="stat-bar-track"><div class="stat-bar-fill" style="width:' + b.pct + '%;background:' + b.color + '"></div></div><span class="stat-bar-val">' + b.val + ' (' + b.pct + '%)</span></div>';
+  });
+  html += '</div>';
+
+  // Acierto por participante
+  html += '<div class="stat-card"><div class="stat-card-title">🎯 % Acierto por participante</div>';
+  const maxPct = pctAcierto[0] ? pctAcierto[0].pct : 100;
+  pctAcierto.forEach(function(p) {
+    const w = maxPct > 0 ? Math.round(p.pct / maxPct * 100) : 0;
+    html += '<div class="stat-bar-row"><span class="stat-bar-label">' + p.nombre.split(' ')[0] + '</span><div class="stat-bar-track"><div class="stat-bar-fill" style="width:' + w + '%;background:#e8a020"></div></div><span class="stat-bar-val">' + p.aciertos + '/' + n + ' (' + p.pct + '%)</span></div>';
+  });
+  html += '</div>';
+
+  // Rachas
+  html += '<div class="stat-card"><div class="stat-card-title">🔥 Rachas</div>';
+  html += '<table class="stat-table"><thead><tr><th>Participante</th><th>Mejor racha</th><th>Activa</th></tr></thead><tbody>';
+  rachas.sort((a,b) => b.mejor - a.mejor).forEach(function(r) {
+    const actBadge = r.activa >= 3 ? '<span class="streak-badge streak-hot">🔥 ' + r.activa + '</span>' :
+                     r.fallos >= 3 ? '<span class="streak-badge streak-cold">🧊 -' + r.fallos + '</span>' :
+                     r.activa > 0 ? '<span style="color:var(--green)">+' + r.activa + '</span>' :
+                     r.fallos > 0 ? '<span style="color:var(--muted)">-' + r.fallos + '</span>' : '—';
+    html += '<tr><td>' + r.nombre.split(' ')[0] + '</td><td class="num">' + r.mejor + '</td><td>' + actBadge + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+
+  // Quién apuesta qué
+  html += '<div class="stat-card"><div class="stat-card-title">📐 Estilo de pronóstico (total)</div>';
+  html += '<table class="stat-table"><thead><tr><th>Participante</th><th>Local</th><th>Visita</th><th>Empate</th></tr></thead><tbody>';
+  ranked.forEach(function(p) {
+    const nL = contarTipo(p.id, 'L');
+    const nV = contarTipo(p.id, 'V');
+    const nE = contarTipo(p.id, 'E');
+    html += '<tr><td>' + p.nombre.split(' ')[0] + '</td><td class="num">' + nL + '</td><td class="num">' + nV + '</td><td class="num">' + nE + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+
+  // Acierto por tipo de resultado
+  html += '<div class="stat-card"><div class="stat-card-title">🧠 Eficiencia por tipo de resultado</div>';
+  const tipoData = [
+    { lbl: 'Cuando gana local', pct: pctAciertoL, color: '#27ae60' },
+    { lbl: 'Cuando gana visitante', pct: pctAciertoV, color: '#e74c3c' },
+    { lbl: 'Cuando hay empate', pct: pctAciertoE, color: '#3498db' },
+  ];
+  tipoData.forEach(function(b) {
+    html += '<div class="stat-bar-row"><span class="stat-bar-label">' + b.lbl + '</span><div class="stat-bar-track"><div class="stat-bar-fill" style="width:' + b.pct + '%;background:' + b.color + '"></div></div><span class="stat-bar-val">' + b.pct + '%</span></div>';
+  });
+  html += '<div style="font-size:11px;color:var(--muted);margin-top:8px">% de participantes que acertaron cuando ese resultado ocurrió</div>';
+  html += '</div>';
+
+  // Partidos más y menos acertados
+  html += '<div class="stat-card"><div class="stat-card-title">🎪 Partidos más recordados</div>';
+  html += '<table class="stat-table"><thead><tr><th>Partido</th><th>Acertaron</th></tr></thead><tbody>';
+  aciertoPorPartido.slice(0,5).forEach(function(p) {
+    html += '<tr><td>' + p.label + '</td><td class="num">' + p.ok + '/' + p.total + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  if (menosAcertado && menosAcertado.pct < 30) {
+    html += '<div style="margin-top:10px;font-size:11px;color:var(--muted)">💀 Sorpresa máxima: <strong style="color:var(--text)">' + menosAcertado.label + '</strong> — solo ' + menosAcertado.ok + '/' + menosAcertado.total + ' acertaron</div>';
+  }
+  html += '</div>';
+
+  // Nadie acertó
+  if (nadieAcerto.length > 0) {
+    html += '<div class="stat-card"><div class="stat-card-title">💀 Sorpresas absolutas (nadie acertó)</div>';
+    html += '<table class="stat-table"><thead><tr><th>Partido</th><th>Resultado</th></tr></thead><tbody>';
+    nadieAcerto.forEach(function(p) {
+      const res = p.resultado_real === 'L' ? p.local : p.resultado_real === 'V' ? p.visitante : 'Empate';
+      html += '<tr><td>' + p.local + ' vs ' + p.visitante + '</td><td class="num">' + res + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+
+  // Todos acertaron
+  if (todosAcertaron.length > 0) {
+    html += '<div class="stat-card"><div class="stat-card-title">✅ Unanimidad total (todos acertaron)</div>';
+    html += '<table class="stat-table"><thead><tr><th>Partido</th><th>Resultado</th></tr></thead><tbody>';
+    todosAcertaron.forEach(function(p) {
+      const res = p.resultado_real === 'L' ? p.local : p.resultado_real === 'V' ? p.visitante : 'Empate';
+      html += '<tr><td>' + p.local + ' vs ' + p.visitante + '</td><td class="num">' + res + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+
+  html += '</div>'; // cierre stats-grid
+
+  // Curiosidades
+  html += '<div class="section-title" style="margin-top:8px">🔍 Curiosidades</div>';
+  html += '<div class="stats-grid">';
+  html += '<div class="stat-card"><div class="stat-card-title">👑 Highlights</div>';
+  html += '<table class="stat-table"><tbody>';
+  if (mejorRacha) html += '<tr><td>Mejor racha histórica</td><td class="num">' + mejorRacha.mejor + ' seguidos — ' + mejorRacha.nombre.split(' ')[0] + '</td></tr>';
+  if (rachaMasActiva) html += '<tr><td>Racha activa más larga</td><td class="num">🔥 ' + rachaMasActiva.activa + ' — ' + rachaMasActiva.nombre.split(' ')[0] + '</td></tr>';
+  if (peorRacha && peorRacha.fallos >= 2) html += '<tr><td>Racha de fallos activa</td><td class="num">🧊 ' + peorRacha.fallos + ' — ' + peorRacha.nombre.split(' ')[0] + '</td></tr>';
+  html += '<tr><td>Más apuesta a local</td><td class="num">' + masLocal.nombre.split(' ')[0] + ' (' + masLocal.n + ' partidos)</td></tr>';
+  html += '<tr><td>Más apuesta a visitante</td><td class="num">' + masVisit.nombre.split(' ')[0] + ' (' + masVisit.n + ' partidos)</td></tr>';
+  html += '<tr><td>Más empates pronosticados</td><td class="num">' + masEmpate.nombre.split(' ')[0] + ' (' + masEmpate.n + ' partidos)</td></tr>';
+  if (masAcertado) html += '<tr><td>Partido más fácil</td><td class="num">' + masAcertado.label.split(' vs ')[0] + ' vs ' + masAcertado.label.split(' vs ')[1] + ' (' + masAcertado.pct + '%)</td></tr>';
+  html += '</tbody></table></div>';
+  html += '</div>';
+
+  document.getElementById('tab-stats').innerHTML = html;
+}
 let currentTab = 'ranking';
 
 document.querySelectorAll('.tab').forEach(t => {
@@ -1188,6 +1430,7 @@ document.querySelectorAll('.tab').forEach(t => {
     if (tab === 'ranking') renderRanking();
     else if (tab === 'partidos') renderPartidos();
     else if (tab === 'pronosticos') renderPronosticos();
+    else if (tab === 'stats') renderStats();
     else if (tab === 'participantes') renderParticipantes();
   });
 });
